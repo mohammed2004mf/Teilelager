@@ -97,7 +97,7 @@ export function uebersichtView(): View {
           <span class="log-zeit">${esc(wann(b.erstellt_am))}</span>
           <div class="log-mitte">
             <div class="log-teil">${esc(b.teil_bezeichnung)}</div>
-            <div class="log-wer">${esc(b.person)} · ${esc(artName(b.art, b.notiz))}${b.storniert ? ' (rückgängig gemacht)' : ''}</div>
+            <div class="log-wer">${esc(artName(b.art, b.notiz))}${b.storniert ? ' (rückgängig gemacht)' : ''}</div>
           </div>
           <span class="log-menge ${b.menge > 0 ? 'text-gruen' : ''}">${delta(b.menge)}</span>
         </div>`,

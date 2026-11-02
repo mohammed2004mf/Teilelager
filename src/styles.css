@@ -481,7 +481,7 @@ select.input { padding: 0 10px; }
 .log-menge { font-family: var(--zahlen); font-weight: 700; font-size: 24px; }
 .log-storniert .log-teil, .log-storniert .fett, .log-storniert .log-menge { text-decoration: line-through; color: var(--grau); }
 .log-tabelle-zeile {
-  display: grid; grid-template-columns: 130px 100px 130px minmax(0, 1fr) 80px 130px; gap: 16px;
+  display: grid; grid-template-columns: 130px 130px minmax(0, 1fr) 80px 130px; gap: 16px;
   align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--linie-hell);
 }
 .log-tabelle-zeile:last-child { border-bottom: 0; }

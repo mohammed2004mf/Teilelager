@@ -100,7 +100,6 @@ export function zugangView(startId: number | null): View {
       .map(
         (b) => `<div class="log-tabelle-zeile${b.storniert ? ' log-storniert' : ''}">
           <span class="grau">${esc(wann(b.erstellt_am))}</span>
-          <span>${esc(b.person)}</span>
           <span class="etikett etikett-${b.art}">${esc(artName(b.art, b.notiz))}</span>
           <span class="fett">${esc(b.teil_bezeichnung)}</span>
           <span class="log-menge rechts">${delta(b.menge)}</span>

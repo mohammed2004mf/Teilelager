@@ -2,7 +2,7 @@ import { backend, istDemoModus } from '../backend';
 import { config } from '../config';
 import { setzeAngemeldetBleiben } from '../supabase';
 import type { View } from '../types';
-import { esc, fehlerText, ICON } from '../util';
+import { fehlerText, ICON } from '../util';
 import { themeKnopfHtml } from '../ui/theme';
 
 export function loginView(nachAnmeldung: () => void): View {
@@ -16,19 +16,6 @@ export function loginView(nachAnmeldung: () => void): View {
             <div class="login-logo">${ICON.logo}<span>Teilelager</span></div>
             <form class="karte login-form" novalidate>
               <h1>Anmelden</h1>
-              <fieldset class="login-namen">
-                <legend>Wer bist du?</legend>
-                <div class="login-namen-raster">
-                  ${benutzer
-                    .map(
-                      (b, i) => `<label class="wahl-karte">
-                        <input type="radio" name="benutzer" value="${esc(b.email)}"${i === 0 ? ' checked' : ''}>
-                        <span>${esc(b.name)}</span>
-                      </label>`,
-                    )
-                    .join('')}
-                </div>
-              </fieldset>
               <div class="feld">
                 <label for="passwort">Passwort</label>
                 <input id="passwort" name="passwort" class="input input-gross" type="password" autocomplete="current-password" required>
@@ -40,7 +27,7 @@ export function loginView(nachAnmeldung: () => void): View {
             <p class="login-fuss">${
               istDemoModus
                 ? 'Demo-Modus: Supabase ist noch nicht eingerichtet. Jedes Passwort funktioniert.'
-                : 'Nur für ' + benutzer.map((b) => esc(b.name)).join(' und ') + '. Eine Registrierung gibt es nicht.'
+                : 'Nur für die Werkstatt. Eine Registrierung gibt es nicht.'
             }</p>
           </main>
         </div>`;
@@ -53,7 +40,6 @@ export function loginView(nachAnmeldung: () => void): View {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const daten = new FormData(form);
-        const email = String(daten.get('benutzer') ?? '');
         const passwort = String(daten.get('passwort') ?? '');
         if (!passwort) {
           fehler.textContent = 'Bitte das Passwort eingeben.';
@@ -67,7 +53,20 @@ export function loginView(nachAnmeldung: () => void): View {
         fehler.hidden = true;
         setzeAngemeldetBleiben(daten.get('merken') === 'on');
         try {
-          await backend.anmelden(email, passwort);
+          // Kein Name mehr: Das Passwort wird nacheinander bei den hinterlegten Konten probiert.
+          // So funktionieren alle bisherigen Passwörter weiter.
+          let letzterFehler: unknown = null;
+          let ok = false;
+          for (const b of benutzer) {
+            try {
+              await backend.anmelden(b.email, passwort);
+              ok = true;
+              break;
+            } catch (versuch) {
+              letzterFehler = versuch;
+            }
+          }
+          if (!ok) throw letzterFehler ?? new Error('Passwort falsch.');
           nachAnmeldung();
         } catch (err) {
           fehler.textContent = fehlerText(err);

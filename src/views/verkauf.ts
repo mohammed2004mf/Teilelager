@@ -171,7 +171,7 @@ export function verkaufView(): View {
           .map(
             (v) => `<div class="verkauf-zeile">
               <div class="grau klein"><div class="fett dunkel">${esc(datum(v.erstellt_am).slice(0, 6))}</div>${esc(zeit(v.erstellt_am))}</div>
-              <div><div class="fett">${esc(v.teil_bezeichnung)}</div><div class="grau klein">${esc(v.person)}</div></div>
+              <div class="fett">${esc(v.teil_bezeichnung)}</div>
               <span class="zahl-mittel rechts">${zahl(-v.menge)}</span>
               <button type="button" class="btn btn-klein" data-vk-storno="${v.id}" title="Verkauf rückgängig machen">Rückgängig</button>
             </div>`,

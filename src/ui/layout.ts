@@ -1,7 +1,5 @@
 import { istDemoModus } from '../backend';
-import { nameZuEmail } from '../config';
-import { store } from '../store';
-import { esc, ICON } from '../util';
+import { ICON } from '../util';
 import { themeKnopfHtml } from './theme';
 
 export type Bereich = 'lager' | 'verkauf';
@@ -21,7 +19,6 @@ const NAV_ICON = {
 };
 
 export function layoutHtml(bereich: Bereich, seite: LagerSeite): string {
-  const name = nameZuEmail(store.benutzerEmail);
   const sub = (id: Exclude<LagerSeite, null>, href: string, text: string) =>
     `<a href="${href}" class="subnav-link"${seite === id ? ' aria-current="page"' : ''}>${NAV_ICON[id]}<span>${text}</span></a>`;
   return `
@@ -40,7 +37,6 @@ export function layoutHtml(bereich: Bereich, seite: LagerSeite): string {
           </nav>
           <div class="benutzer">
             ${themeKnopfHtml()}
-            <span class="benutzer-name"><span class="avatar" aria-hidden="true">${esc(name.charAt(0))}</span><span class="benutzer-text">${esc(name)}</span></span>
             <button type="button" class="btn-abmelden" data-abmelden>Abmelden</button>
           </div>
         </div>
