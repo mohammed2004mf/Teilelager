@@ -549,6 +549,22 @@ select.input { padding: 0 10px; }
 }
 .vorschau-zahl { font-family: var(--zahlen); font-weight: 700; font-size: 28px; }
 
+/* ---------- Zugang (einfach) ---------- */
+.zugang-bestand {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: 18px 22px; border-radius: var(--radius); background: var(--flaeche-2); border: 1px solid var(--linie);
+  transition: background-color 0.4s;
+}
+.zugang-bestand .riesen-zahl { font-size: 84px; }
+.zugang-bestand-neu { background: var(--gruen-hell); border-color: var(--gruen-punkt); }
+.zugang-bestand-neu .riesen-zahl { color: var(--gruen); }
+.zugang-plus { font-weight: 700; font-size: 18px; color: var(--gruen); }
+.zugang-einfach { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; }
+.korrektur-klein { border-top: 1px solid var(--linie-hell); padding-top: 14px; }
+.korrektur-klein summary { cursor: pointer; color: var(--grau); font-weight: 600; font-size: 15px; }
+.korrektur-klein summary:hover { color: var(--text); }
+.korrektur-klein[open] summary { margin-bottom: 14px; }
+
 /* ---------- Formular ---------- */
 .knopf-reihe { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 12px; }
 .knopf-reihe .abstand { flex: 1 1 auto; }

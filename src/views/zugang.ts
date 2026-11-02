@@ -10,6 +10,7 @@ export function zugangView(startId: number | null): View {
   let suche = '';
   let gewaehlt: number | null = startId;
   let menge = 1;
+  let zuletztHinzu: { id: number; menge: number } | null = null;
 
   function renderTreffer(): void {
     const ziel = root.querySelector<HTMLElement>('#zugang-treffer')!;
@@ -44,47 +45,36 @@ export function zugangView(startId: number | null): View {
       return;
     }
     const kat = store.kategorie(t.kategorie_id);
-    const neu = t.bestand + menge;
+    const zuletzt = zuletztHinzu && zuletztHinzu.id === t.id ? zuletztHinzu.menge : 0;
     ziel.innerHTML = `
-      <section class="karte karte-polster stapel">
-        <div class="teil-kopf">
-          <div>
-            <div class="mini-label">${esc(kat?.name ?? '')}${t.lagerort ? ` · Lagerort ${esc(t.lagerort)}` : ''}</div>
-            <div class="teil-kopf-name">${esc(t.bezeichnung)}</div>
-            <div class="grau">${esc(teilInfo(t, kat))}</div>
-          </div>
-          <div class="teil-kopf-bestand">
-            <div class="grau klein">Auf Lager</div>
-            <div class="riesen-zahl ${t.bestand <= 0 ? 'text-rot' : ''}">${zahl(t.bestand)}</div>
-          </div>
+      <section class="karte karte-polster stapel-gross">
+        <div>
+          <div class="mini-label">${esc(kat?.name ?? '')}${t.lagerort ? ` · Lagerort ${esc(t.lagerort)}` : ''}</div>
+          <div class="teil-kopf-name">${esc(t.bezeichnung)}</div>
+          <div class="grau">${esc(teilInfo(t, kat))}</div>
         </div>
-        <form class="stapel" id="zugang-form">
-          <h2 class="h-klein">Lieferung eintragen</h2>
-          <div class="menge-zeile">
-            <div class="feld">
-              <label for="zugang-menge">Gelieferte Menge</label>
-              <input id="zugang-menge" type="number" min="1" step="1" inputmode="numeric" class="input menge-gross" value="${menge}" data-zurueckhalten>
-            </div>
-            <div class="schnell-knoepfe" role="group" aria-label="Schnellauswahl">
-              ${[1, 5, 10, 20].map((n) => `<button type="button" class="btn btn-schnell" data-schnell="${n}" aria-pressed="${n === menge}">${n}</button>`).join('')}
-            </div>
-          </div>
-          <div class="vorschau">
-            <div>Neuer Bestand: <span class="vorschau-zahl">${zahl(t.bestand)} + ${menge} = ${zahl(neu)}</span></div>
-            <button type="submit" class="btn btn-primaer btn-gross">Zugang buchen</button>
-          </div>
-        </form>
-      </section>
-      <section class="karte karte-polster stapel">
-        <h2 class="h-klein">Bestand korrigieren</h2>
-        <p class="grau">Wenn ihr nachgezählt habt und die Zahl nicht stimmt.</p>
-        <form class="menge-zeile" id="korrektur-form">
+        <div class="zugang-bestand${zuletzt ? ' zugang-bestand-neu' : ''}">
+          <span class="grau">Auf Lager</span>
+          <span class="riesen-zahl ${t.bestand <= 0 ? 'text-rot' : ''}">${zahl(t.bestand)}</span>
+          ${zuletzt ? `<span class="zugang-plus">${zuletzt} hinzugefügt</span>` : ''}
+        </div>
+        <form class="zugang-einfach" id="zugang-form">
           <div class="feld">
-            <label for="gezaehlt">Tatsächlich gezählt</label>
-            <input id="gezaehlt" type="number" step="1" inputmode="numeric" class="input input-mittel" placeholder="z. B. ${Math.max(0, t.bestand)}" data-zurueckhalten>
+            <label for="zugang-menge">Wie viele kommen dazu?</label>
+            <input id="zugang-menge" type="number" min="1" step="1" inputmode="numeric" class="input menge-gross" value="${menge}" data-zurueckhalten>
           </div>
-          <button type="submit" class="btn">Korrektur speichern</button>
+          <button type="submit" class="btn btn-primaer btn-gross">Hinzufügen</button>
         </form>
+        <details class="korrektur-klein">
+          <summary>Zahl stimmt nicht? Bestand direkt eintragen</summary>
+          <form class="zugang-einfach" id="korrektur-form">
+            <div class="feld">
+              <label for="gezaehlt">Richtiger Bestand</label>
+              <input id="gezaehlt" type="number" step="1" inputmode="numeric" class="input input-mittel" placeholder="${Math.max(0, t.bestand)}" data-zurueckhalten>
+            </div>
+            <button type="submit" class="btn">Speichern</button>
+          </form>
+        </details>
       </section>`;
   }
 
@@ -93,11 +83,11 @@ export function zugangView(startId: number | null): View {
       root = r;
       root.innerHTML = `
         <div class="seiten-kopf">
-          <div><h1>Zugang</h1><p class="grau">Lieferung eintragen oder Bestand nach dem Zählen korrigieren</p></div>
+          <div><h1>Zugang</h1><p class="grau">Teil auswählen, Menge eingeben, hinzufügen.</p></div>
         </div>
         <div class="zwei-spalten">
           <section class="karte karte-polster stapel spalte-schmal">
-            <label for="zugang-suche" class="h-klein">1. Teil suchen</label>
+            <label for="zugang-suche" class="h-klein">Teil suchen</label>
             <div class="suche-feld suche-feld-klein">
               <span class="suche-icon">${ICON.suche}</span>
               <input id="zugang-suche" type="search" class="input" autocomplete="off" placeholder="Name, Artikelnummer …">
@@ -119,16 +109,11 @@ export function zugangView(startId: number | null): View {
         if (wahl) {
           gewaehlt = Number(wahl.dataset.waehle);
           menge = 1;
+          zuletztHinzu = null;
           renderTreffer();
           renderKarte();
           root.querySelector<HTMLInputElement>('#zugang-menge')?.focus();
           root.querySelector<HTMLInputElement>('#zugang-menge')?.select();
-          return;
-        }
-        const schnell = el.closest<HTMLElement>('[data-schnell]');
-        if (schnell) {
-          menge = Number(schnell.dataset.schnell);
-          renderKarte();
           return;
         }
       });
@@ -137,12 +122,6 @@ export function zugangView(startId: number | null): View {
         const el = e.target as HTMLInputElement;
         if (el.id === 'zugang-menge') {
           menge = Math.max(0, ganzzahl(el.value, 0));
-          const t = gewaehlt !== null ? store.teil(gewaehlt) : undefined;
-          const vz = root.querySelector<HTMLElement>('.vorschau-zahl');
-          if (t && vz) vz.textContent = `${zahl(t.bestand)} + ${menge} = ${zahl(t.bestand + menge)}`;
-          root.querySelectorAll<HTMLButtonElement>('[data-schnell]').forEach((b) =>
-            b.setAttribute('aria-pressed', String(Number(b.dataset.schnell) === menge)),
-          );
         }
       });
 
@@ -161,8 +140,10 @@ export function zugangView(startId: number | null): View {
             }
             const b = await zugang(t, menge);
             if (b) {
+              zuletztHinzu = { id: t.id, menge };
               menge = 1;
               renderKarte();
+              root.querySelector<HTMLInputElement>('#zugang-menge')?.select();
             }
           } else if (form.id === 'korrektur-form') {
             const feld = form.querySelector<HTMLInputElement>('#gezaehlt')!;
@@ -173,8 +154,9 @@ export function zugangView(startId: number | null): View {
             const neu = ganzzahl(feld.value, t.bestand);
             const b = await backend.korrigieren(t.id, neu, 'Nachgezählt');
             if (b) {
+              zuletztHinzu = null;
               store.uebernehmeBuchung(b);
-              toast(`Bestand von ${t.bezeichnung} auf ${zahl(neu)} korrigiert.`);
+              toast(`Bestand auf ${zahl(neu)} geändert.`);
             } else {
               toast('Der Bestand stimmt schon – nichts geändert.');
             }
