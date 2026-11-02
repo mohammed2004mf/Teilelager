@@ -3,6 +3,9 @@
 Ein einfaches Programm für Mahmud und Kravan: Bestand sehen, Lieferungen eintragen,
 Verkäufe erfassen. Beide sehen Änderungen sofort auf ihrem eigenen PC.
 
+> **Ohne Anmeldung:** Das Programm öffnet sich direkt, ohne Passwort. Jeder, der die Adresse kennt,
+> kann den Bestand sehen und buchen – die Adresse daher nicht weitergeben und wöchentlich die Excel-Sicherung ziehen.
+
 **Technik:** TypeScript, HTML, CSS (gebaut mit Vite) · Supabase (Datenbank, Anmeldung, Live-Aktualisierung) · Vercel (Hosting)
 
 ---
@@ -50,11 +53,11 @@ zwei Tabs, sieht man schon die Live-Aktualisierung.
 Damit gibt es die Tabellen, die Buchungsregeln, die Zugriffsrechte, die Live-Aktualisierung
 und die 5 Start-Kategorien (Öle & Flüssigkeiten, Filter, Reifen, Bremsen, Sonstiges).
 
-### 2.3 Registrierung abschalten
+### 2.3 Registrierung abschalten (optional – Anmeldung wird nicht mehr benutzt)
 **Authentication → Sign In / Providers** (bzw. **Settings**) → **„Allow new users to sign up“ ausschalten** → Speichern.
 So kann sich niemand Fremdes ein Konto anlegen.
 
-### 2.4 Die zwei Benutzer anlegen
+### 2.4 Benutzer (nicht mehr nötig)
 **Authentication → Users → Add user → Create new user**, jeweils mit **„Auto Confirm User“** angehakt:
 
 | Name   | E-Mail                    | Passwort        |

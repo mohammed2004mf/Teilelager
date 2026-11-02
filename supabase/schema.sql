@@ -85,7 +85,7 @@ set search_path = public
 as $$
   select coalesce(
     (select initcap(split_part(email, '@', 1)) from auth.users where id = auth.uid()),
-    'Unbekannt'
+    'Werkstatt'
   );
 $$;
 
@@ -124,9 +124,6 @@ declare
   v_kat    text;
   v_row    public.buchungen;
 begin
-  if auth.uid() is null then
-    raise exception 'Nicht angemeldet';
-  end if;
   if p_art not in ('zugang', 'verkauf') then
     raise exception 'Ungültige Buchungsart: %', p_art;
   end if;
@@ -168,9 +165,6 @@ declare
   v_kat    text;
   v_row    public.buchungen;
 begin
-  if auth.uid() is null then
-    raise exception 'Nicht angemeldet';
-  end if;
   if p_neuer_bestand is null then
     raise exception 'Bitte einen Bestand angeben';
   end if;
@@ -211,9 +205,6 @@ declare
   v_teil   public.teile;
   v_row    public.buchungen;
 begin
-  if auth.uid() is null then
-    raise exception 'Nicht angemeldet';
-  end if;
 
   select * into v_b from public.buchungen where id = p_buchung_id for update;
   if not found then
@@ -245,53 +236,53 @@ end;
 $$;
 
 -- ---------------------------------------------------------------------
--- 4. Rechte und Zugriffsregeln (nur angemeldete Benutzer)
+-- 4. Rechte und Zugriffsregeln (ohne Anmeldung nutzbar)
 -- ---------------------------------------------------------------------
 
 alter table public.kategorien enable row level security;
 alter table public.teile      enable row level security;
 alter table public.buchungen  enable row level security;
 
--- Niemand ohne Anmeldung
-revoke all on public.kategorien, public.teile, public.buchungen from anon;
-revoke all on function public.buchen(bigint, text, integer, text) from public, anon;
-revoke all on function public.korrigieren(bigint, integer, text) from public, anon;
-revoke all on function public.stornieren(bigint) from public, anon;
-revoke all on function public.person_name() from public, anon;
+-- OHNE ANMELDUNG: Das Programm wird ohne Login benutzt (Wunsch der Werkstatt).
+-- Jeder, der die Adresse der Webseite kennt, kann lesen und buchen.
+revoke all on function public.buchen(bigint, text, integer, text) from public;
+revoke all on function public.korrigieren(bigint, integer, text) from public;
+revoke all on function public.stornieren(bigint) from public;
+revoke all on function public.person_name() from public;
 
 -- Kategorien: lesen, anlegen, umbenennen, löschen
-grant select, insert, update, delete on public.kategorien to authenticated;
+grant select, insert, update, delete on public.kategorien to anon, authenticated;
 
 -- Teile: alles außer dem Bestand direkt zu ändern (der geht nur über Buchungen)
-revoke insert, update on public.teile from authenticated;
-grant select, delete on public.teile to authenticated;
+revoke insert, update on public.teile from anon, authenticated;
+grant select, delete on public.teile to anon, authenticated;
 grant insert (kategorie_id, bezeichnung, artikelnummer, ean, lieferant, lagerort, fahrzeuge, einheit,
               viskositaet, freigabe, gebinde, hersteller, breite, hoehe, zoll, reifen_index, saison, marke, dot)
-  on public.teile to authenticated;
+  on public.teile to anon, authenticated;
 grant update (kategorie_id, bezeichnung, artikelnummer, ean, lieferant, lagerort, fahrzeuge, einheit,
               viskositaet, freigabe, gebinde, hersteller, breite, hoehe, zoll, reifen_index, saison, marke, dot)
-  on public.teile to authenticated;
+  on public.teile to anon, authenticated;
 
 -- Buchungen: nur lesen (neue Buchungen nur über die Funktionen oben)
-revoke insert, update, delete on public.buchungen from authenticated;
-grant select on public.buchungen to authenticated;
+revoke insert, update, delete on public.buchungen from anon, authenticated;
+grant select on public.buchungen to anon, authenticated;
 
-grant execute on function public.buchen(bigint, text, integer, text) to authenticated;
-grant execute on function public.korrigieren(bigint, integer, text) to authenticated;
-grant execute on function public.stornieren(bigint) to authenticated;
-grant execute on function public.person_name() to authenticated;
+grant execute on function public.buchen(bigint, text, integer, text) to anon, authenticated;
+grant execute on function public.korrigieren(bigint, integer, text) to anon, authenticated;
+grant execute on function public.stornieren(bigint) to anon, authenticated;
+grant execute on function public.person_name() to anon, authenticated;
 
 drop policy if exists "angemeldet" on public.kategorien;
 create policy "angemeldet" on public.kategorien
-  for all to authenticated using (true) with check (true);
+  for all to anon, authenticated using (true) with check (true);
 
 drop policy if exists "angemeldet" on public.teile;
 create policy "angemeldet" on public.teile
-  for all to authenticated using (true) with check (true);
+  for all to anon, authenticated using (true) with check (true);
 
 drop policy if exists "angemeldet lesen" on public.buchungen;
 create policy "angemeldet lesen" on public.buchungen
-  for select to authenticated using (true);
+  for select to anon, authenticated using (true);
 
 -- ---------------------------------------------------------------------
 -- 5. Live-Aktualisierung einschalten

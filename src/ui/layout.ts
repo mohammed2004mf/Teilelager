@@ -37,7 +37,6 @@ export function layoutHtml(bereich: Bereich, seite: LagerSeite): string {
           </nav>
           <div class="benutzer">
             ${themeKnopfHtml()}
-            <button type="button" class="btn-abmelden" data-abmelden>Abmelden</button>
           </div>
         </div>
       </header>

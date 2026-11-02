@@ -1,12 +1,9 @@
 import './styles.css';
-import { backend } from './backend';
 import { store } from './store';
 import type { View } from './types';
 import { layoutHtml, type Bereich, type LagerSeite } from './ui/layout';
-import { toast } from './ui/toast';
 import { verbindeThemeKnoepfe } from './ui/theme';
 import { esc, fehlerText } from './util';
-import { loginView } from './views/login';
 import { uebersichtView } from './views/uebersicht';
 import { lagerlisteView } from './views/lagerliste';
 import { zugangView } from './views/zugang';
@@ -96,31 +93,9 @@ document.addEventListener('focusout', () => {
   }, 50);
 });
 
-app.addEventListener('click', async (e) => {
-  if ((e.target as HTMLElement).closest('[data-abmelden]')) {
-    await backend.abmelden();
-    zeigeLogin();
-  }
-});
-
-function zeigeLogin(): void {
-  aktuell?.unmount?.();
-  store.stoppeLive();
-  aktuellerLayoutSchluessel = '';
-  window.removeEventListener('hashchange', zeigeSeite);
-  document.title = 'Anmelden · Teilelager';
-  aktuell = loginView(() => void starteApp());
-  app.innerHTML = '';
-  aktuell.mount(app);
-}
-
 async function starteApp(): Promise<void> {
   try {
-    store.benutzerEmail = await backend.aktuelleEmail();
-    if (!store.benutzerEmail) {
-      zeigeLogin();
-      return;
-    }
+    // Ohne Anmeldung: direkt laden (Wunsch der Werkstatt)
     app.innerHTML = '<div class="boot">Daten werden geladen …</div>';
     await store.laden();
     store.starteLive();
@@ -136,9 +111,5 @@ async function starteApp(): Promise<void> {
 
 verbindeThemeKnoepfe();
 store.abonnieren(() => aktualisiere());
-backend.beiAbmeldung(() => {
-  toast('Du wurdest abgemeldet.');
-  zeigeLogin();
-});
 
 void starteApp();
