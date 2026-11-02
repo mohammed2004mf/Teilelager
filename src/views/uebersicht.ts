@@ -1,8 +1,7 @@
 import { store } from '../store';
 import type { View } from '../types';
 import { teilZeileHtml, teilZeilenKopfHtml, verbindeBuchen } from '../ui/buchung';
-import { toast } from '../ui/toast';
-import { esc, fehlerText, ICON, passtZuSuche, zeit } from '../util';
+import { esc, ICON, passtZuSuche, zeit } from '../util';
 
 const MAX_TREFFER = 8;
 
@@ -88,7 +87,6 @@ export function uebersichtView(): View {
           <h1>Übersicht</h1>
           <div class="seiten-kopf-rechts">
             <span class="grau" id="stand"></span>
-            <button type="button" class="btn" data-sicherung>${ICON.download}Sicherung herunterladen (Excel)</button>
           </div>
         </div>
         <section class="karte suche-karte" aria-label="Suche">
@@ -112,19 +110,6 @@ export function uebersichtView(): View {
           input.value = '';
           suche = '';
           renderSuche();
-        }
-      });
-      root.querySelector('[data-sicherung]')?.addEventListener('click', async (e) => {
-        const btn = e.currentTarget as HTMLButtonElement;
-        btn.disabled = true;
-        try {
-          const { sicherungHerunterladen } = await import('../backup');
-          await sicherungHerunterladen();
-          toast('Sicherung wurde heruntergeladen.');
-        } catch (err) {
-          toast(`Sicherung fehlgeschlagen: ${fehlerText(err)}`, { fehler: true });
-        } finally {
-          btn.disabled = false;
         }
       });
       verbindeBuchen(root);
