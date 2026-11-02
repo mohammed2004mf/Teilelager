@@ -1,17 +1,14 @@
-import { backend } from '../backend';
 import { store } from '../store';
-import type { Buchung, View } from '../types';
-import { artName, teilZeileHtml, teilZeilenKopfHtml, verbindeBuchen } from '../ui/buchung';
+import type { View } from '../types';
+import { teilZeileHtml, teilZeilenKopfHtml, verbindeBuchen } from '../ui/buchung';
 import { toast } from '../ui/toast';
-import { delta, esc, fehlerText, ICON, passtZuSuche, zeit, wann } from '../util';
+import { esc, fehlerText, ICON, passtZuSuche, zeit } from '../util';
 
 const MAX_TREFFER = 8;
 
 export function uebersichtView(): View {
   let root: HTMLElement;
   let suche = '';
-  let letzte: Buchung[] = [];
-  let ladeTimer = 0;
 
   function renderSuche(): void {
     const ziel = root.querySelector<HTMLElement>('#suche-ergebnis')!;
@@ -52,7 +49,7 @@ export function uebersichtView(): View {
       inhalt.innerHTML = `
         <section class="karte leer-zustand">
           <h2>Noch keine Teile eingetragen</h2>
-          <p>Legt euer erstes Teil an – danach seht ihr hier, was leer ist und was zuletzt gebucht wurde.</p>
+          <p>Legt euer erstes Teil an – danach seht ihr hier, was leer ist.</p>
           <a href="#/teil/neu" class="btn btn-primaer btn-gross">Erstes Teil anlegen</a>
         </section>`;
       return;
@@ -73,46 +70,14 @@ export function uebersichtView(): View {
           <span class="kachel-text">${da === 1 ? 'Teil ist' : 'Teile sind'} vorrätig</span>
         </a>
       </div>
-      <div class="zwei-spalten">
-        <section class="karte karte-liste spalte-breit">
-          <div class="karte-kopf"><h2>Leer – nachbestellen</h2><span class="grau">Teile mit 0 Stück oder weniger</span></div>
-          ${
-            leer.length === 0
-              ? '<p class="karte-leer">Alles da – kein Teil ist leer.</p>'
-              : `<div class="scroll-x"><div class="liste">${teilZeilenKopfHtml()}${leer.map((t) => teilZeileHtml(t, { kategorieZeigen: true })).join('')}</div></div>`
-          }
-        </section>
-        <section class="karte karte-liste spalte-schmal">
-          <div class="karte-kopf"><h2>Zuletzt gebucht</h2><a href="#/verkauf">Verkäufe</a></div>
-          <div id="letzte-buchungen">${letzteHtml()}</div>
-        </section>
-      </div>`;
-  }
-
-  function letzteHtml(): string {
-    if (letzte.length === 0) return '<p class="karte-leer">Noch keine Buchungen.</p>';
-    return letzte
-      .map(
-        (b) => `<div class="log-zeile${b.storniert ? ' log-storniert' : ''}">
-          <span class="log-zeit">${esc(wann(b.erstellt_am))}</span>
-          <div class="log-mitte">
-            <div class="log-teil">${esc(b.teil_bezeichnung)}</div>
-            <div class="log-wer">${esc(artName(b.art, b.notiz))}${b.storniert ? ' (rückgängig gemacht)' : ''}</div>
-          </div>
-          <span class="log-menge ${b.menge > 0 ? 'text-gruen' : ''}">${delta(b.menge)}</span>
-        </div>`,
-      )
-      .join('');
-  }
-
-  async function ladeLetzte(): Promise<void> {
-    try {
-      letzte = await backend.buchungen({ limit: 8 });
-      const el = root.querySelector<HTMLElement>('#letzte-buchungen');
-      if (el) el.innerHTML = letzteHtml();
-    } catch (e) {
-      console.warn(e);
-    }
+      <section class="karte karte-liste">
+        <div class="karte-kopf"><h2>Leer – nachbestellen</h2><span class="grau">Teile mit 0 Stück oder weniger</span></div>
+        ${
+          leer.length === 0
+            ? '<p class="karte-leer">Alles da – kein Teil ist leer.</p>'
+            : `<div class="scroll-x"><div class="liste">${teilZeilenKopfHtml()}${leer.map((t) => teilZeileHtml(t, { kategorieZeigen: true })).join('')}</div></div>`
+        }
+      </section>`;
   }
 
   return {
@@ -165,17 +130,11 @@ export function uebersichtView(): View {
       verbindeBuchen(root);
       renderSuche();
       renderRest();
-      void ladeLetzte();
       input.focus();
     },
     update() {
       renderSuche();
       renderRest();
-      window.clearTimeout(ladeTimer);
-      ladeTimer = window.setTimeout(() => void ladeLetzte(), 100);
-    },
-    unmount() {
-      window.clearTimeout(ladeTimer);
     },
   };
 }

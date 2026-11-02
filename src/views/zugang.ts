@@ -1,17 +1,15 @@
 import { backend } from '../backend';
 import { store } from '../store';
-import type { Buchung, Teil, View } from '../types';
-import { artName, stornierenMitMeldung, zugang } from '../ui/buchung';
+import type { Teil, View } from '../types';
+import { zugang } from '../ui/buchung';
 import { toast } from '../ui/toast';
-import { delta, esc, fehlerText, ganzzahl, ICON, passtZuSuche, status, teilInfo, wann, zahl } from '../util';
+import { esc, fehlerText, ganzzahl, ICON, passtZuSuche, status, teilInfo, zahl } from '../util';
 
 export function zugangView(startId: number | null): View {
   let root: HTMLElement;
   let suche = '';
   let gewaehlt: number | null = startId;
   let menge = 1;
-  let log: Buchung[] = [];
-  let ladeTimer = 0;
 
   function renderTreffer(): void {
     const ziel = root.querySelector<HTMLElement>('#zugang-treffer')!;
@@ -79,7 +77,7 @@ export function zugangView(startId: number | null): View {
       </section>
       <section class="karte karte-polster stapel">
         <h2 class="h-klein">Bestand korrigieren</h2>
-        <p class="grau">Wenn ihr nachgezählt habt und die Zahl nicht stimmt. Wird als „Korrektur“ gespeichert.</p>
+        <p class="grau">Wenn ihr nachgezählt habt und die Zahl nicht stimmt.</p>
         <form class="menge-zeile" id="korrektur-form">
           <div class="feld">
             <label for="gezaehlt">Tatsächlich gezählt</label>
@@ -88,40 +86,6 @@ export function zugangView(startId: number | null): View {
           <button type="submit" class="btn">Korrektur speichern</button>
         </form>
       </section>`;
-  }
-
-  function renderLog(): void {
-    const ziel = root.querySelector<HTMLElement>('#zugang-log')!;
-    if (log.length === 0) {
-      ziel.innerHTML = '<p class="karte-leer">Noch keine Zugänge oder Korrekturen.</p>';
-      return;
-    }
-    ziel.innerHTML = `<div class="scroll-x"><div class="liste" style="min-width:720px">${log
-      .map(
-        (b) => `<div class="log-tabelle-zeile${b.storniert ? ' log-storniert' : ''}">
-          <span class="grau">${esc(wann(b.erstellt_am))}</span>
-          <span class="etikett etikett-${b.art}">${esc(artName(b.art, b.notiz))}</span>
-          <span class="fett">${esc(b.teil_bezeichnung)}</span>
-          <span class="log-menge rechts">${delta(b.menge)}</span>
-          <span class="rechts">${
-            b.storniert
-              ? '<span class="grau klein">rückgängig gemacht</span>'
-              : b.art === 'storno'
-                ? ''
-                : `<button type="button" class="btn btn-klein" data-storno="${b.id}">Rückgängig</button>`
-          }</span>
-        </div>`,
-      )
-      .join('')}</div></div>`;
-  }
-
-  async function ladeLog(): Promise<void> {
-    try {
-      log = await backend.buchungen({ arten: ['zugang', 'korrektur'], limit: 15 });
-      renderLog();
-    } catch (e) {
-      console.warn(e);
-    }
   }
 
   return {
@@ -141,11 +105,7 @@ export function zugangView(startId: number | null): View {
             <div class="treffer-liste" id="zugang-treffer"></div>
           </section>
           <div class="spalte-breit stapel" id="zugang-karte"></div>
-        </div>
-        <section class="karte karte-liste">
-          <div class="karte-kopf"><h2>Letzte Zugänge und Korrekturen</h2></div>
-          <div id="zugang-log"></div>
-        </section>`;
+        </div>`;
 
       const sucheInput = root.querySelector<HTMLInputElement>('#zugang-suche')!;
       sucheInput.addEventListener('input', () => {
@@ -170,14 +130,6 @@ export function zugangView(startId: number | null): View {
           menge = Number(schnell.dataset.schnell);
           renderKarte();
           return;
-        }
-        const storno = el.closest<HTMLElement>('[data-storno]');
-        if (storno) {
-          const b = log.find((x) => x.id === Number(storno.dataset.storno));
-          if (b) {
-            await stornierenMitMeldung(b);
-            void ladeLog();
-          }
         }
       });
 
@@ -211,7 +163,6 @@ export function zugangView(startId: number | null): View {
             if (b) {
               menge = 1;
               renderKarte();
-              void ladeLog();
             }
           } else if (form.id === 'korrektur-form') {
             const feld = form.querySelector<HTMLInputElement>('#gezaehlt')!;
@@ -224,7 +175,6 @@ export function zugangView(startId: number | null): View {
             if (b) {
               store.uebernehmeBuchung(b);
               toast(`Bestand von ${t.bezeichnung} auf ${zahl(neu)} korrigiert.`);
-              void ladeLog();
             } else {
               toast('Der Bestand stimmt schon – nichts geändert.');
             }
@@ -239,17 +189,11 @@ export function zugangView(startId: number | null): View {
 
       renderTreffer();
       renderKarte();
-      void ladeLog();
       if (gewaehlt === null) sucheInput.focus();
     },
     update() {
       renderTreffer();
       renderKarte();
-      window.clearTimeout(ladeTimer);
-      ladeTimer = window.setTimeout(() => void ladeLog(), 100);
-    },
-    unmount() {
-      window.clearTimeout(ladeTimer);
     },
   };
 }

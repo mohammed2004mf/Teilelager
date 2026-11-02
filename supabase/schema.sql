@@ -50,7 +50,7 @@ create table if not exists public.teile (
 
 create index if not exists teile_kategorie_idx on public.teile(kategorie_id);
 
--- Buchungen: jede Bewegung (Zugang, Verkauf, Korrektur, Storno). Wird nie gelöscht.
+-- Buchungen: gespeichert werden nur Verkäufe (und deren Rückgängig). Zugänge/Korrekturen nicht.
 -- "menge" ist die Änderung des Bestands: Zugang +, Verkauf −, Korrektur ±, Storno = Gegenbuchung.
 create table if not exists public.buchungen (
   id                bigint generated always as identity primary key,
@@ -144,9 +144,23 @@ begin
 
   select name into v_kat from public.kategorien where id = v_teil.kategorie_id;
 
-  insert into public.buchungen (teil_id, teil_bezeichnung, kategorie_name, art, menge, bestand_nachher, person, notiz)
-  values (v_teil.id, v_teil.bezeichnung, v_kat, p_art, v_delta, v_teil.bestand, public.person_name(), p_notiz)
-  returning * into v_row;
+  if p_art = 'verkauf' then
+    -- Nur Verkäufe werden gespeichert (für die Verkaufsübersicht)
+    insert into public.buchungen (teil_id, teil_bezeichnung, kategorie_name, art, menge, bestand_nachher, person, notiz)
+    values (v_teil.id, v_teil.bezeichnung, v_kat, p_art, v_delta, v_teil.bestand, public.person_name(), p_notiz)
+    returning * into v_row;
+  else
+    -- Zugang: kein Verlauf, nur den neuen Bestand zurückmelden
+    v_row.teil_id := v_teil.id;
+    v_row.teil_bezeichnung := v_teil.bezeichnung;
+    v_row.kategorie_name := v_kat;
+    v_row.art := p_art;
+    v_row.menge := v_delta;
+    v_row.bestand_nachher := v_teil.bestand;
+    v_row.person := 'Werkstatt';
+    v_row.storniert := false;
+    v_row.erstellt_am := now();
+  end if;
 
   return v_row;
 end;
@@ -184,10 +198,17 @@ begin
 
   select name into v_kat from public.kategorien where id = v_teil.kategorie_id;
 
-  insert into public.buchungen (teil_id, teil_bezeichnung, kategorie_name, art, menge, bestand_nachher, person, notiz)
-  values (v_teil.id, v_teil.bezeichnung, v_kat, 'korrektur', p_neuer_bestand - v_alt, v_teil.bestand,
-          public.person_name(), coalesce(p_notiz, 'Korrektur'))
-  returning * into v_row;
+  -- Korrekturen werden nicht gespeichert (kein Verlauf), nur den neuen Bestand zurückmelden
+  v_row.teil_id := v_teil.id;
+  v_row.teil_bezeichnung := v_teil.bezeichnung;
+  v_row.kategorie_name := v_kat;
+  v_row.art := 'korrektur';
+  v_row.menge := p_neuer_bestand - v_alt;
+  v_row.bestand_nachher := v_teil.bestand;
+  v_row.person := 'Werkstatt';
+  v_row.notiz := coalesce(p_notiz, 'Korrektur');
+  v_row.storniert := false;
+  v_row.erstellt_am := now();
 
   return v_row;
 end;

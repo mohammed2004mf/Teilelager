@@ -118,7 +118,7 @@ const supabaseBackend: Backend = {
     const r = pruefe(
       await supabase.rpc('korrigieren', { p_teil_id: teilId, p_neuer_bestand: neuerBestand, p_notiz: notiz ?? null }),
     ) as Buchung | null;
-    return r && r.id ? r : null;
+    return r && r.teil_id ? r : null;
   },
   async stornieren(buchungId) {
     return pruefe(await supabase.rpc('stornieren', { p_buchung_id: buchungId })) as Buchung;
@@ -228,7 +228,8 @@ function createDemoBackend(): Backend {
       storno_von: stornoVon,
       erstellt_am: new Date().toISOString(),
     };
-    d.buchungen.unshift(b);
+    // Wie in der echten Datenbank: nur Verkäufe kommen in den Verlauf
+    if (art === 'verkauf' || art === 'storno') d.buchungen.unshift(b);
     return b;
   };
 
