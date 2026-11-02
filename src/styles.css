@@ -559,6 +559,11 @@ select.input { padding: 0 10px; }
 .zugang-bestand-neu { background: var(--gruen-hell); border-color: var(--gruen-punkt); }
 .zugang-bestand-neu .riesen-zahl { color: var(--gruen); }
 .zugang-plus { font-weight: 700; font-size: 18px; color: var(--gruen); }
+.zugang-bestand-weg { background: var(--rot-hell); border-color: var(--rot); }
+.zugang-bestand-weg .riesen-zahl { color: var(--rot-text); }
+.zugang-minus { font-weight: 700; font-size: 18px; color: var(--rot-text); }
+.btn-weg { border-color: var(--rot); color: var(--rot-text); }
+.btn-weg:hover { background: var(--rot-hell); color: var(--rot-text); }
 .zugang-einfach { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; }
 .korrektur-klein { border-top: 1px solid var(--linie-hell); padding-top: 14px; }
 .korrektur-klein summary { cursor: pointer; color: var(--grau); font-weight: 600; font-size: 15px; }

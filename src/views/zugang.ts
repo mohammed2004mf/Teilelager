@@ -2,6 +2,7 @@ import { backend } from '../backend';
 import { store } from '../store';
 import type { Teil, View } from '../types';
 import { zugang } from '../ui/buchung';
+import { frage } from '../ui/modal';
 import { toast } from '../ui/toast';
 import { esc, fehlerText, ganzzahl, ICON, passtZuSuche, status, teilInfo, zahl } from '../util';
 
@@ -10,7 +11,7 @@ export function zugangView(startId: number | null): View {
   let suche = '';
   let gewaehlt: number | null = startId;
   let menge = 1;
-  let zuletztHinzu: { id: number; menge: number } | null = null;
+  let zuletztHinzu: { id: number; menge: number } | null = null; // menge < 0 = weggenommen
 
   function renderTreffer(): void {
     const ziel = root.querySelector<HTMLElement>('#zugang-treffer')!;
@@ -53,17 +54,19 @@ export function zugangView(startId: number | null): View {
           <div class="teil-kopf-name">${esc(t.bezeichnung)}</div>
           <div class="grau">${esc(teilInfo(t, kat))}</div>
         </div>
-        <div class="zugang-bestand${zuletzt ? ' zugang-bestand-neu' : ''}">
+        <div class="zugang-bestand${zuletzt > 0 ? ' zugang-bestand-neu' : zuletzt < 0 ? ' zugang-bestand-weg' : ''}">
           <span class="grau">Auf Lager</span>
           <span class="riesen-zahl ${t.bestand <= 0 ? 'text-rot' : ''}">${zahl(t.bestand)}</span>
-          ${zuletzt ? `<span class="zugang-plus">${zuletzt} hinzugefügt</span>` : ''}
+          ${zuletzt > 0 ? `<span class="zugang-plus">${zuletzt} hinzugefügt</span>` : ''}
+          ${zuletzt < 0 ? `<span class="zugang-minus">${-zuletzt} weggenommen</span>` : ''}
         </div>
         <form class="zugang-einfach" id="zugang-form">
           <div class="feld">
-            <label for="zugang-menge">Wie viele kommen dazu?</label>
+            <label for="zugang-menge">Wie viele?</label>
             <input id="zugang-menge" type="number" min="1" step="1" inputmode="numeric" class="input menge-gross" value="${menge}" data-zurueckhalten>
           </div>
-          <button type="submit" class="btn btn-primaer btn-gross">Hinzufügen</button>
+          <button type="submit" class="btn btn-primaer btn-gross" data-richtung="plus">+ Hinzufügen</button>
+          <button type="submit" class="btn btn-gross btn-weg" data-richtung="minus">− Wegnehmen</button>
         </form>
         <details class="korrektur-klein">
           <summary>Zahl stimmt nicht? Bestand direkt eintragen</summary>
@@ -83,7 +86,7 @@ export function zugangView(startId: number | null): View {
       root = r;
       root.innerHTML = `
         <div class="seiten-kopf">
-          <div><h1>Zugang</h1><p class="grau">Teil auswählen, Menge eingeben, hinzufügen.</p></div>
+          <div><h1>Bestand ändern</h1><p class="grau">Teil auswählen, Menge eingeben, hinzufügen oder wegnehmen.</p></div>
         </div>
         <div class="zwei-spalten">
           <section class="karte karte-polster stapel spalte-schmal">
@@ -130,17 +133,36 @@ export function zugangView(startId: number | null): View {
         const form = e.target as HTMLFormElement;
         const t = gewaehlt !== null ? store.teil(gewaehlt) : undefined;
         if (!t) return;
-        const knopf = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-        if (knopf) knopf.disabled = true;
+        const knoepfe = [...form.querySelectorAll<HTMLButtonElement>('button[type="submit"]')];
+        knoepfe.forEach((k) => (k.disabled = true));
         try {
           if (form.id === 'zugang-form') {
             if (menge <= 0) {
               toast('Bitte eine Menge größer als 0 eingeben.', { fehler: true });
               return;
             }
-            const b = await zugang(t, menge);
-            if (b) {
-              zuletztHinzu = { id: t.id, menge };
+            const richtung = ((e as SubmitEvent).submitter as HTMLButtonElement | null)?.dataset.richtung ?? 'plus';
+            let ok = false;
+            if (richtung === 'minus') {
+              // Wegnehmen: nur die Zahl ändern, wird nicht als Verkauf gezählt
+              if (menge > t.bestand) {
+                const weiter = await frage({
+                  titel: 'Nicht genug auf Lager',
+                  text: `Es ${t.bestand === 1 ? 'ist' : 'sind'} nur <strong>${zahl(t.bestand)}</strong> da. Trotzdem <strong>${menge}</strong> wegnehmen?`,
+                  hinweis: `Der Bestand steht danach auf <strong class="text-rot">${zahl(t.bestand - menge)}</strong>.`,
+                  ja: 'Trotzdem wegnehmen',
+                  warnung: true,
+                });
+                if (!weiter) return;
+              }
+              const b = await backend.korrigieren(t.id, t.bestand - menge, 'Weggenommen');
+              if (b) store.uebernehmeBuchung(b);
+              ok = true;
+            } else {
+              ok = !!(await zugang(t, menge));
+            }
+            if (ok) {
+              zuletztHinzu = { id: t.id, menge: richtung === 'minus' ? -menge : menge };
               menge = 1;
               renderKarte();
               root.querySelector<HTMLInputElement>('#zugang-menge')?.select();
@@ -165,7 +187,7 @@ export function zugangView(startId: number | null): View {
         } catch (err) {
           toast(fehlerText(err), { fehler: true });
         } finally {
-          if (knopf) knopf.disabled = false;
+          knoepfe.forEach((k) => (k.disabled = false));
         }
       });
 

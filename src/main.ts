@@ -34,7 +34,7 @@ function route(hash: string): Route {
       return { bereich: 'lager', seite: 'lager', view: lagerlisteView, titel: 'Lagerliste' };
     case 'zugang': {
       const id = Number(teile[1]);
-      return { bereich: 'lager', seite: 'zugang', view: () => zugangView(Number.isFinite(id) ? id : null), titel: 'Zugang' };
+      return { bereich: 'lager', seite: 'zugang', view: () => zugangView(Number.isFinite(id) ? id : null), titel: 'Bestand ändern' };
     }
     case 'teil': {
       const id = teile[1] === 'neu' || !teile[1] ? null : Number(teile[1]);

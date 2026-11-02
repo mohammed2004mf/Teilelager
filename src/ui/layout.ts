@@ -46,7 +46,7 @@ export function layoutHtml(bereich: Bereich, seite: LagerSeite): string {
               <div class="subnav-innen">
                 ${sub('uebersicht', '#/', 'Übersicht')}
                 ${sub('lager', '#/lager', 'Lagerliste')}
-                ${sub('zugang', '#/zugang', 'Zugang')}
+                ${sub('zugang', '#/zugang', 'Bestand ändern')}
                 ${sub('teil', '#/teil/neu', 'Neues Teil')}
                 ${sub('kategorien', '#/kategorien', 'Kategorien')}
               </div>
