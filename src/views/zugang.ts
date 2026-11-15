@@ -28,7 +28,7 @@ export function zugangView(startId: number | null): View {
     ziel.innerHTML = liste
       .map(
         (t) => `<button type="button" class="treffer-knopf" data-waehle="${t.id}" aria-pressed="${t.id === gewaehlt}">
-          <span><span class="treffer-name">${esc(t.bezeichnung)}</span><span class="treffer-ort">${esc(
+          <span>${t.marke ? `<span class="teil-marke">${esc(t.marke)}</span>` : ''}<span class="treffer-name">${esc(t.bezeichnung)}</span><span class="treffer-ort">${esc(
             [store.kategorie(t.kategorie_id)?.name, t.lagerort ? `Lagerort ${t.lagerort}` : ''].filter(Boolean).join(' · '),
           )}</span></span>
           <span class="treffer-zahl treffer-${status(t.bestand)}">${zahl(t.bestand)}</span>
@@ -51,7 +51,7 @@ export function zugangView(startId: number | null): View {
       <section class="karte karte-polster stapel-gross">
         <div>
           <div class="mini-label">${esc(kat?.name ?? '')}${t.lagerort ? ` · Lagerort ${esc(t.lagerort)}` : ''}</div>
-          <div class="teil-kopf-name">${esc(t.bezeichnung)}</div>
+          ${t.marke ? `<span class="teil-marke">${esc(t.marke)}</span>` : ''}<div class="teil-kopf-name">${esc(t.bezeichnung)}</div>
           <div class="grau">${esc(teilInfo(t, kat))}</div>
         </div>
         <div class="zugang-bestand${zuletzt > 0 ? ' zugang-bestand-neu' : zuletzt < 0 ? ' zugang-bestand-weg' : ''}">

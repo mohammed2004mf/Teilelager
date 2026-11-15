@@ -75,7 +75,7 @@ export function verkaufView(): View {
         <div class="vk-gewaehlt">
           <div class="vk-teil">
             <span class="mini-label">Teil</span>
-            <div class="vk-teil-name">${esc(t.bezeichnung)}</div>
+            ${t.marke ? `<span class="teil-marke">${esc(t.marke)}</span>` : ''}<div class="vk-teil-name">${esc(t.bezeichnung)}</div>
             <button type="button" class="link-knopf" data-vk-aendern>anderes Teil wählen</button>
           </div>
           <div class="feld">
@@ -108,7 +108,7 @@ export function verkaufView(): View {
       ? `<div class="treffer-liste treffer-raster">${treffer
           .map(
             (x) => `<button type="button" class="treffer-knopf" data-vk-waehle="${x.id}">
-              <span><span class="treffer-name">${esc(x.bezeichnung)}</span><span class="treffer-ort">${esc(
+              <span>${x.marke ? `<span class="teil-marke">${esc(x.marke)}</span>` : ''}<span class="treffer-name">${esc(x.bezeichnung)}</span><span class="treffer-ort">${esc(
                 [store.kategorie(x.kategorie_id)?.name, x.lagerort ? `Lagerort ${x.lagerort}` : ''].filter(Boolean).join(' · '),
               )}</span></span>
               <span class="treffer-zahl treffer-${status(x.bestand)}">${zahl(x.bestand)}</span>
