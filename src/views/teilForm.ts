@@ -155,6 +155,16 @@ export function teilFormView(teilId: number | null): View {
     if (istNeu) root.querySelector<HTMLInputElement>('#f-bezeichnung')?.focus();
   }
 
+  /** Gleiche Artikelnummer oder gleiche Marke + Bezeichnung = gibt es schon */
+  function findeDoppeltes(d: TeilEingabe): Teil | undefined {
+    const n = (x: string | null | undefined) => (x ?? '').toLowerCase().replace(/[\s\-/.]/g, '');
+    return store.teile.find(
+      (t) =>
+        (n(d.artikelnummer) !== '' && n(t.artikelnummer) === n(d.artikelnummer)) ||
+        (n(t.bezeichnung) === n(d.bezeichnung) && n(t.marke) === n(d.marke)),
+    );
+  }
+
   function eingabeAusForm(form: HTMLFormElement): TeilEingabe | string {
     const d = new FormData(form);
     const bezeichnung = leerZuNull(d.get('bezeichnung'));
@@ -228,6 +238,25 @@ export function teilFormView(teilId: number | null): View {
           return;
         }
         fehler.hidden = true;
+        if (istNeu) {
+          const vorhanden = findeDoppeltes(daten);
+          if (vorhanden) {
+            const kat = store.kategorie(vorhanden.kategorie_id);
+            const ok = await frage({
+              titel: 'Dieses Teil gibt es schon im Lager',
+              text: `<strong>${esc([vorhanden.marke, vorhanden.bezeichnung].filter(Boolean).join(' '))}</strong>${
+                vorhanden.artikelnummer ? ` (Art.-Nr. ${esc(vorhanden.artikelnummer)})` : ''
+              } ist bereits eingetragen${kat ? ` in „${esc(kat.name)}“` : ''}.`,
+              hinweis: `Aktuell auf Lager: <strong>${zahl(vorhanden.bestand)} ${esc(vorhanden.einheit)}</strong>${
+                vorhanden.lagerort ? ` · Lagerort ${esc(vorhanden.lagerort)}` : ''
+              }. Neue Stückzahl bitte über „Bestand ändern“ eintragen.`,
+              ja: 'Trotzdem neu anlegen',
+              nein: 'Abbrechen',
+              warnung: true,
+            });
+            if (!ok) return;
+          }
+        }
         form.querySelectorAll<HTMLButtonElement>('button').forEach((b) => (b.disabled = true));
         try {
           if (istNeu) {
