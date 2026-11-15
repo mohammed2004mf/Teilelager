@@ -56,7 +56,6 @@ function spezialHtml(vorlage: Vorlage, t: Partial<Teil>): string {
         }) || '–')}</strong></p>
         <div class="feld-raster">
           ${feld('reifen_index', 'Last-/Geschwindigkeitsindex', t.reifen_index, { platzhalter: 'z. B. 91V' })}
-          ${feld('marke', 'Marke', t.marke, { platzhalter: 'z. B. Continental' })}
           ${feld('dot', 'DOT (Woche/Jahr)', t.dot, { platzhalter: 'z. B. 2325' })}
         </div>
         <fieldset class="feldgruppe">
@@ -105,7 +104,8 @@ export function teilFormView(teilId: number | null): View {
           <section class="karte karte-polster stapel">
             <h2 class="h-klein">Grunddaten</h2>
             <div class="feld-raster">
-              ${feld('bezeichnung', 'Bezeichnung', t.bezeichnung, { breit: true, pflicht: true, platzhalter: 'z. B. MANN Ölfilter W 712/95' })}
+              ${feld('marke', 'Marke', t.marke, { platzhalter: 'z. B. LIQUI MOLY, MANN, Continental' })}
+              ${feld('bezeichnung', 'Bezeichnung', t.bezeichnung, { pflicht: true, platzhalter: 'z. B. Benzin System Reiniger' })}
               <div class="feld">
                 <label for="f-kategorie">Kategorie</label>
                 <select id="f-kategorie" name="kategorie_id" class="input">
@@ -180,7 +180,7 @@ export function teilFormView(teilId: number | null): View {
       zoll: v === 'reifen' ? zahlOderNull(d.get('zoll')) : null,
       reifen_index: v === 'reifen' ? leerZuNull(d.get('reifen_index'))?.toUpperCase() ?? null : null,
       saison: v === 'reifen' ? ((leerZuNull(d.get('saison')) as TeilEingabe['saison']) ?? null) : null,
-      marke: v === 'reifen' ? leerZuNull(d.get('marke')) : null,
+      marke: leerZuNull(d.get('marke')),
       dot: v === 'reifen' ? leerZuNull(d.get('dot')) : null,
     };
   }

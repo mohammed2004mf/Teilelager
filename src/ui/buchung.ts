@@ -42,6 +42,7 @@ export function teilZeileHtml(t: Teil, o: { kategorieZeigen?: boolean } = {}): s
   return `<div class="teil-zeile teil-zeile-klickbar" data-bearbeiten="${t.id}" title="Klicken zum Bearbeiten">
     <div class="teil-name">
       ${o.kategorieZeigen && kat ? `<div class="mini-label">${esc(kat.name)}</div>` : ''}
+      ${t.marke ? `<div class="teil-marke">${esc(t.marke)}</div>` : ''}
       <a class="teil-titel" href="#/teil/${t.id}" title="Teil bearbeiten">${esc(t.bezeichnung)}</a>
       ${info ? `<div class="teil-info">${esc(info)}</div>` : ''}
     </div>

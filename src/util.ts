@@ -45,7 +45,6 @@ export function teilInfo(t: Teil, kat: Kategorie | undefined): string {
       const g = reifenGroesse(t);
       if (g) teile.push(g);
       if (t.saison) teile.push(t.saison);
-      if (t.marke) teile.push(t.marke);
       if (t.dot) teile.push(`DOT ${t.dot}`);
       break;
     }
