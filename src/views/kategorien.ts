@@ -25,7 +25,7 @@ export function kategorienView(): View {
       ziel.innerHTML = '<p class="karte-leer">Noch keine Kategorien. Rechts die erste anlegen.</p>';
       return;
     }
-    ziel.innerHTML = `<div class="scroll-x"><div class="liste" style="min-width:560px">
+    ziel.innerHTML = `<div class="liste kat-liste-rahmen">
       <div class="kat-zeile kat-zeile-kopf" aria-hidden="true"><span>Kategorie</span><span>Vorlage</span><span class="rechts">Teile</span><span></span></div>
       ${store.kategorien
         .map((k) => {
@@ -45,7 +45,7 @@ export function kategorienView(): View {
           </div>`;
         })
         .join('')}
-    </div></div>
+    </div>
     <p class="liste-fuss">Löschen geht nur, wenn keine Teile mehr in der Kategorie sind.</p>`;
   }
 

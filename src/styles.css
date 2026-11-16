@@ -381,6 +381,7 @@ select.input { padding: 0 10px; }
 
 /* ---------- Teil-Zeilen ---------- */
 .liste { min-width: 700px; }
+.liste.kat-liste-rahmen { min-width: 0; }
 .teil-zeile {
   display: grid; grid-template-columns: minmax(0, 1fr) 100px 130px 172px; align-items: center;
   gap: 20px; padding: 13px 20px; border-bottom: 1px solid var(--linie-hell);
@@ -577,8 +578,8 @@ select.input { padding: 0 10px; }
 
 /* ---------- Kategorien ---------- */
 .kat-zeile {
-  display: grid; grid-template-columns: minmax(0, 1fr) 130px 70px 230px; gap: 16px; align-items: center;
-  padding: 14px 20px; border-bottom: 1px solid var(--linie-hell);
+  display: grid; grid-template-columns: minmax(0, 1fr) 110px 56px 200px; gap: 12px; align-items: center;
+  padding: 14px 16px; border-bottom: 1px solid var(--linie-hell);
 }
 .kat-zeile:not(.kat-zeile-kopf):hover { background: var(--hover); }
 .kat-zeile-kopf {
@@ -700,6 +701,19 @@ select.input { padding: 0 10px; }
   .karte-polster { padding: 18px 16px; }
   .subnav-link span { display: none; }
   .subnav-link[aria-current='page'] span { display: inline; }
+
+  /* Kategorien als Karten statt Tabelle */
+  .kat-zeile-kopf { display: none; }
+  .kat-zeile {
+    grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'name zahl' 'vorlage vorlage' 'knoepfe knoepfe';
+    gap: 8px 12px; padding: 16px;
+  }
+  .kat-zeile > * { min-width: 0; }
+  .kat-zeile > :nth-child(1) { grid-area: name; overflow-wrap: anywhere; }
+  .kat-zeile > :nth-child(2) { grid-area: vorlage; }
+  .kat-zeile > :nth-child(3) { grid-area: zahl; }
+  .kat-zeile > :nth-child(4) { grid-area: knoepfe; justify-content: flex-start; margin-top: 4px; }
+  .kat-zeile .btn-klein { flex: 1 1 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
