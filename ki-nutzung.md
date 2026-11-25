@@ -9,6 +9,7 @@ Offenlegung des Einsatzes generativer KI in diesem Projekt (Lehrveranstaltung So
 | Artefakt | KI-Einsatz (wofür) | Eigene Prüfung / Entscheidung |
 |---|---|---|
 | Projektstruktur (`docs/`, `tests/`, `CHANGELOG.md`, `ki-nutzung.md`) | Anlegen der Ordner und Platzhalterdateien nach der empfohlenen Struktur der Aufgabenstellung | _noch auszufüllen_ |
+| Produktvision (`docs/requirements/vision.md`) | Sprachliche und strukturelle Überarbeitung zu einem Fließtext mit Problem, Zielgruppe und Nutzen | Die Inhalte (Ausgangslage der Werkstatt, Zielgruppe, Nutzen) stammen vom Nutzer; die KI hat sie nur formuliert und gegliedert |
 
 ## Hinweise
 - Die Angaben zur eigenen Prüfung werden ergänzt, sobald die jeweiligen Artefakte geprüft wurden.
