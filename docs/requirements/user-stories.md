@@ -72,6 +72,7 @@ Als Inhaber möchte ich nach dem Nachzählen den richtigen Bestand direkt eintra
 Akzeptanzkriterien:
 - Ich kann für ein Teil den gezählten Bestand direkt eingeben und speichern.
 - Danach zeigt das Programm den eingegebenen Wert als Bestand an.
+- Außerdem lässt sich eine Menge wegnehmen, ohne dass sie als Verkauf zählt. Ist die Menge größer als der Bestand, erscheint eine Warnung.
 
 ### US-07 Teile suchen
 Als Inhaber möchte ich Teile schnell über ein Suchfeld finden, um nicht lange in der Liste zu suchen.
@@ -120,9 +121,9 @@ Akzeptanzkriterien:
 Als Inhaber möchte ich einen Verkauf rückgängig machen, um Fehleingaben zu korrigieren.
 
 Akzeptanzkriterien:
-- Direkt nach dem Buchen lässt sich der Verkauf über „Rückgängig“ in der Meldung zurücknehmen.
-- Ein Verkauf lässt sich auch später in der Verkaufsübersicht rückgängig machen.
-- Der Bestand wird dabei wieder um die verkaufte Menge erhöht.
+- In der Verkaufsübersicht hat jeder Verkauf einen Knopf „Rückgängig“.
+- Vor dem Rückgängigmachen fragt das Programm nach einer Bestätigung.
+- Der Bestand wird dabei wieder um die verkaufte Menge erhöht und der Verkauf als rückgängig gemacht gekennzeichnet.
 - Ein Verkauf lässt sich nur einmal rückgängig machen.
 
 ### US-13 Verkäufe auswerten
