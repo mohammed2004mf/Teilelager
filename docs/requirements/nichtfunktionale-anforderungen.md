@@ -127,5 +127,5 @@ Qualitätsanforderungen beschreiben, wie gut das System seine Funktionen erbring
 | RB-04 | Installation und Start nach den Schritten der `README.md` | Vorgabe der Projektaufgabe |
 | RB-05 | Keine Datensicherung: Der Auftraggeber verzichtet bewusst darauf. Es gibt keine Sicherungsfunktion in der Oberfläche. | Entscheidung des Auftraggebers. Folge und akzeptiertes Risiko: Bei Datenverlust (zum Beispiel Ausfall oder Löschung des Datenbankprojekts) lassen sich Bestände und Verkäufe nicht wiederherstellen, denn der kostenlose Datenbanktarif sichert selbst nichts. Das Risiko wird in der Reflexion bewertet. |
 
-## 4 Offene Punkte (vom Nutzer zu klären)
-- Stimmen die Zielwerte (Zeiten, 1.000 Teile als Obergrenze, Verfügbarkeit 99 %, Browser)?
+## 4 Bestätigung
+Die Zielwerte (Zeiten, 1.000 Teile als Obergrenze, Verfügbarkeit 99 %, Browser) wurden vom Projektbearbeiter am 25.11.2026 als zutreffend bestätigt.

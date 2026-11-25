@@ -187,7 +187,7 @@ Die Angabe zur Häufigkeit ist eine Annahme und noch mit dem Auftraggeber zu bes
 | Auslöser | Der Inhaber möchte wissen, was in einem Zeitraum verkauft wurde. |
 | Vorbedingungen | Keine. Ohne Verkäufe zeigt das System einen entsprechenden Hinweis. |
 | Nachbedingungen | Keine Änderung am System, die Daten werden nur angezeigt. |
-| Priorität / Häufigkeit | Mittel / gelegentlich (Annahme) |
+| Priorität / Häufigkeit | Hoch / gelegentlich (Annahme) |
 
 **Hauptszenario**
 1. Der Inhaber öffnet den Bereich „Verkauf“.
