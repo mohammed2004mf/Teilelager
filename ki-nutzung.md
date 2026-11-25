@@ -9,6 +9,7 @@ Offenlegung des Einsatzes generativer KI in diesem Projekt (Lehrveranstaltung So
 | Artefakt | KI-Einsatz (wofür) | Eigene Prüfung / Entscheidung |
 |---|---|---|
 | Projektstruktur (`docs/`, `tests/`, `CHANGELOG.md`, `ki-nutzung.md`) | Anlegen der Ordner und Platzhalterdateien nach der empfohlenen Struktur der Aufgabenstellung | _noch auszufüllen_ |
+| Use Cases (`docs/requirements/use-cases.md`) | Entwurf des Use-Case-Diagramms (Mermaid) und von sechs Use Cases in der Vorlage des Kurses, abgeleitet aus den User Stories und dem vorhandenen Programm; dabei Korrektur eines Fehlers in `user-stories.md` und `README.md` (Ablauf „Rückgängig“) | _noch auszufüllen_ |
 | User Stories (`docs/requirements/user-stories.md`) | Entwurf der Epics, User Stories und Akzeptanzkriterien, abgeleitet aus dem vorhandenen Programm (Oberfläche und Quellcode) | Vom Nutzer durchgesehen und ohne inhaltliche Änderungen übernommen |
 | Stakeholder und Nutzerrollen (`docs/requirements/stakeholder.md`) | Entwurf und Formulierung des Dokuments; Gliederung nach den Stakeholder-Kategorien aus dem Kurs (Kunde, Nutzer, Entwickler) | Die Angaben zu Auftraggeber, Nutzer und Anzahl der Nutzer stammen vom Nutzer |
 | Produktvision (`docs/requirements/vision.md`) | Sprachliche und strukturelle Überarbeitung zu einem Fließtext mit Problem, Zielgruppe und Nutzen | Die Inhalte (Ausgangslage der Werkstatt, Zielgruppe, Nutzen) stammen vom Nutzer; die KI hat sie nur formuliert und gegliedert |
