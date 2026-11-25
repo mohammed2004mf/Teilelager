@@ -3,8 +3,7 @@
 Offenlegung des Einsatzes generativer KI in diesem Projekt (Lehrveranstaltung Software Engineering, WS 2026/27).
 
 - **Verwendetes Werkzeug:** Claude (Anthropic), über Claude Code.
-- **Form der Angaben:** Pro Artefakt wird festgehalten, wofür die KI genutzt wurde und was selbst geprüft, geändert oder entschieden wurde. Die Eingaben (Prompts) werden nicht dokumentiert; das ist mit dem Dozenten so abgestimmt.
-
+- **Form der Angaben:** Pro Artefakt wird festgehalten, wofür die KI genutzt wurde und was selbst geprüft, geändert oder entschieden wurde.
 ## Übersicht je Artefakt
 
 | Artefakt | KI-Einsatz (wofür) | Eigene Prüfung / Entscheidung |
