@@ -84,7 +84,8 @@ Kategorien) und **Verkauf**.
 | Teil ändern oder löschen | In der Lagerliste auf den Namen klicken |
 | Kategorien verwalten | **Lager → Kategorien** (Vorlagen: Standard, Öl, Filter, Reifen) |
 | Was wurde verkauft? | **Verkauf** – Heute / Woche / Monat / eigener Zeitraum |
-| Fehler gemacht | **Rückgängig** in der Meldung unten rechts oder in den Listen |
+| Teile wegnehmen, ohne Verkauf | **Lager → Bestand ändern → Wegnehmen** |
+| Verkauf falsch eingetragen | **Verkauf** – in der Liste „Einzelne Verkäufe“ auf **Rückgängig** klicken |
 
 - **Mehr verkaufen als da ist?** Es kommt eine Warnung. Mit „Trotzdem verkaufen“ wird der Bestand negativ
   (rot, „Im Minus – prüfen“), bis die Lieferung eingetragen oder korrigiert wird.
