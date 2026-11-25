@@ -1,7 +1,7 @@
 # Teilelager – Lager & Verkauf für die Werkstatt
 
 Webanwendung zur Lagerverwaltung einer Werkstatt: Bestand ansehen, Lieferungen eintragen, Verkäufe erfassen.
-Mehrere Nutzer sehen Änderungen sofort auf ihrem eigenen PC (Live-Aktualisierung).
+Das Programm wird vom Inhaber der Werkstatt genutzt. Änderungen erscheinen per Live-Aktualisierung sofort, auch wenn das Programm auf mehreren Geräten oder in mehreren Browser-Tabs geöffnet ist.
 
 Entstanden als Projektarbeit in der Lehrveranstaltung *Software Engineering* (HS Flensburg, WS 2026/27).
 
@@ -131,7 +131,7 @@ styles.css            Aussehen
 **Datenmodell:** `kategorien` (mit Vorlage standard/oel/filter/reifen) · `teile` (mit aktuellem Bestand) ·
 `buchungen` (gespeichert werden Verkäufe und ihre Rückgängig-Buchungen).
 Der Bestand ändert sich ausschließlich über die Datenbank-Funktionen `buchen`, `korrigieren` und `stornieren`,
-damit bei gleichzeitigen Buchungen von zwei PCs nichts verloren geht.
+damit bei gleichzeitigen Buchungen von mehreren Geräten nichts verloren geht.
 
 ---
 
@@ -195,6 +195,6 @@ Die Environment Variables fehlen oder sind falsch → in Vercel prüfen und **Re
 prüfen: Die Namen müssen genau `VITE_SUPABASE_URL` und `VITE_SUPABASE_ANON_KEY` lauten (nicht `NEXT_PUBLIC_…`).
 Danach den Dev-Server mit `Strg+C` stoppen und `npm run dev` neu starten, denn ein Neuladen der Seite reicht nicht.
 
-**Änderungen vom anderen PC kommen nicht an?**
+**Änderungen von einem anderen Gerät kommen nicht an?**
 Seite neu laden. Wenn es dauerhaft nicht klappt: im SQL Editor `supabase/schema.sql` erneut ausführen
 (schaltet die Live-Aktualisierung ein; vorhandene Daten bleiben erhalten).

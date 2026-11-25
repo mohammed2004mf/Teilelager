@@ -9,7 +9,7 @@ Die Werkstatt NAS Wallsbüll verwaltete ihre Teile bisher auf Zetteln. Dadurch f
 
 ## Zielgruppe
 
-Zielgruppe ist die Werkstatt selbst, also die Personen, die Teile verwalten und verkaufen.
+Zielgruppe ist die Werkstatt selbst. Genutzt wird das Programm vom Inhaber, der die Teile verwaltet und verkauft.
 
 ## Nutzen
 
