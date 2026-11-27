@@ -4,6 +4,22 @@ Alle wesentlichen Änderungen am Teilelager-Programm. Pro Meilenstein gibt es ei
 
 ## [Unveröffentlicht]
 
+## [0.2] – 2026-11-27 – Architektur
+
+### Hinzugefügt
+- Architekturdokumente in `docs/architecture/`:
+  - `qualitaetsszenarien.md`: Utility Tree und 10 messbare Qualitätsszenarien (`Q-01` bis `Q-10`), ATAM-Kurzanalyse
+  - `architekturstil.md`: Herleitung des Architekturstils mit Attribute-Driven Design (Schichten im Client, Client-Server, ereignisgesteuerte Live-Aktualisierung), Alternativen und Konsequenzen
+  - `strukturen.md`: Modul-, dynamische und Allokationsstrukturen
+  - `komponenten.md` und `diagramme/`: Komponenten-, Verteilungs- und Paketdiagramm in UML-Notation (PlantUML)
+  - `adr/`: sechs Architecture Decision Records (`ADR-001` bis `ADR-006`)
+  - `entscheidungen-und-nfr.md`: Zuordnung der Entscheidungen zu den nichtfunktionalen Anforderungen mit Trade-offs
+  - `sichten.md`: Zuordnung der Dokumente zu den Sichten des 4+1-Modells
+- Issues und Meilensteine für die weitere Planung sowie ein Projekt-Board auf GitHub.
+
+### Bekannt
+- Technische Schuld im Code, dokumentiert in `architekturstil.md`: `backup.ts` verletzt die Schichtung und wird nicht mehr genutzt; Reste der früheren Anmeldung sind noch vorhanden. Bereinigung im Meilenstein `v0.9` geplant.
+
 ## [0.1] – 2026-11-25 – Anforderungen
 
 ### Hinzugefügt
