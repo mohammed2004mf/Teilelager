@@ -4,5 +4,40 @@ Alle wesentlichen Änderungen am Teilelager-Programm. Pro Meilenstein gibt es ei
 
 ## [Unveröffentlicht]
 
+## [0.1] – 2026-11-25 – Anforderungen
+
 ### Hinzugefügt
-- Ordnerstruktur für die Projektdokumentation (`docs/`, `tests/`) mit Platzhaltern.
+- Projektstruktur für die Dokumentation und Tests: `docs/`, `tests/`, `CHANGELOG.md`, `ki-nutzung.md`.
+- Anforderungsdokumente in `docs/requirements/`:
+  - `vision.md`: Produktvision mit Leitsatz, Problem, Zielgruppe, Nutzen und Zielen
+  - `stakeholder.md`: Stakeholder (`SH-01` bis `SH-04`) und Nutzerrolle Inhaber (`R-01`)
+  - `user-stories.md`: 5 Epics und 15 User Stories (`US-01` bis `US-15`) mit Akzeptanzkriterien
+  - `use-cases.md`: Use-Case-Diagramm und 6 Use Cases (`UC-01` bis `UC-06`) in der Kursvorlage
+  - `nichtfunktionale-anforderungen.md`: 10 messbare Qualitätsanforderungen (`NFR-01` bis `NFR-10`) und Randbedingungen (`RB-01` bis `RB-05`)
+  - `priorisierung.md`: Priorisierung nach MoSCoW mit Begründung
+- `ki-nutzung.md`: Offenlegung des KI-Einsatzes je Artefakt.
+
+### Geändert
+- `README.md` neu strukturiert: Installation, Start und Bedienung, Tests, Projektstruktur und Dokumentation; Betrieb (Supabase, Vercel) ans Ende verschoben; auf einen Nutzer angepasst.
+
+### Entfernt
+- Veraltete Angaben zu Anmeldung und Benutzerverwaltung aus der `README.md`.
+
+## Frühere Entwicklung (vor `v0.1`, 26.10. bis 16.11.2026)
+
+Die Anwendung entstand vor der Dokumentation. Die Änderungen sind hier aus der Git-Historie zusammengefasst.
+
+### Hinzugefügt
+- Erste Version des Teilelagers mit Lager, Verkauf, Supabase-Anbindung und heller/dunkler Darstellung (26.10.).
+- Installierbar als App: Manifest und App-Symbole (27.10.).
+- „Bestand ändern“: Hinzufügen und Wegnehmen auf einer Seite, neuer Bestand groß sichtbar (02.11.).
+- Marke als eigenes Feld für alle Teile, in Liste, Verkauf und Bestandsänderung über der Bezeichnung (15.11.).
+- Warnung, wenn ein neues Teil schon im Lager existiert (15.11.).
+- Kategorien: Handy-Ansicht als Karten statt abgeschnittener Tabelle (16.11.).
+
+### Geändert
+- Anmeldung nur mit Passwort, danach ganz ohne Anmeldung: Das Programm öffnet sich direkt (02.11.).
+- Kein Verlauf mehr: Es werden nur Verkäufe gespeichert (02.11.).
+
+### Entfernt
+- Knopf „Sicherung herunterladen“ (02.11.).
