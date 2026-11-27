@@ -1,0 +1,30 @@
+@startuml verteilungsdiagramm
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+title Verteilungsdiagramm Teilelager
+
+node "PC oder Handy des Inhabers" <<device>> as Geraet {
+  node "Webbrowser" <<execution environment>> as Browser {
+    artifact "Teilelager-Webanwendung\n(index.html, assets/*.js, assets/*.css,\nmanifest.webmanifest)" as WebApp
+  }
+}
+
+node "Vercel" <<Hosting / CDN>> as Vercel {
+  artifact "dist/\n(gebaute Webanwendung)" as Dist
+}
+
+node "Supabase" <<Cloud-Dienst>> as Supabase {
+  node "API-Gateway" <<execution environment>> as Gateway {
+    artifact "REST-Schnittstelle" as RestArt
+    artifact "Realtime-Dienst" as RtArt
+  }
+  node "PostgreSQL-Datenbank" <<database server>> as Pg {
+    artifact "schema.sql\n(Tabellen, Funktionen,\nZugriffsregeln)" as Schema
+  }
+}
+
+Browser -down- Vercel : HTTPS\n(Laden der Anwendung)
+Browser -right- Gateway : HTTPS (REST, Datenbankfunktionen)\nWSS (WebSocket, Änderungsereignisse)
+Gateway -down- Pg : PostgreSQL-Protokoll\n(SQL)
+@enduml

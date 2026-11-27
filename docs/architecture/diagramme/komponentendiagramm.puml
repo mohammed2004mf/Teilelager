@@ -1,0 +1,46 @@
+@startuml komponentendiagramm
+!pragma layout smetana
+skinparam componentStyle uml2
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam nodesep 60
+skinparam ranksep 50
+title Komponentendiagramm Teilelager
+
+component "Teilelager-Client (Browser)" as Client {
+  component "Seiten\n(main.ts, views/*, ui-Bausteine)" as Seiten
+  interface "IBuchung" as IBuchung
+  interface "IDatenstand" as IDatenstand
+  component "Buchungsablauf\n(ui/buchung.ts)" as Buchung
+  component "Datenstand\n(store.ts)" as Store
+  interface "Backend" as IBackend
+  component "Datenzugriff\n(backend.ts)" as Zugriff
+  portout "Netz" as PortClient
+
+  Seiten -down-( IBuchung
+  Seiten -down-( IDatenstand
+  Seiten -down-( IBackend
+  IBuchung -down- Buchung
+  IDatenstand -down- Store
+  Buchung -right-( IDatenstand
+  Buchung -down-( IBackend
+  Store -down-( IBackend
+  IBackend -down- Zugriff
+  Zugriff -down- PortClient
+}
+
+component "Supabase (Dienst)" as Supabase {
+  interface "REST-API" as IRest
+  interface "Änderungsereignisse" as IEvents
+  component "Programmierschnittstelle\n(REST)" as Rest
+  component "Live-Kanal\n(Realtime)" as Realtime
+  component "PostgreSQL\n(Tabellen, Buchungsfunktionen,\nZugriffsregeln)" as Db
+  IRest -down- Rest
+  IEvents -down- Realtime
+  Rest .down.> Db
+  Realtime .down.> Db
+}
+
+PortClient -right-( IRest
+PortClient -right-( IEvents
+@enduml
