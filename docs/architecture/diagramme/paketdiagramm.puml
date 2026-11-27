@@ -1,0 +1,35 @@
+@startuml paketdiagramm
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam packageStyle folder
+title Paketdiagramm Teilelager (nach Schichten)
+
+package "Client (src/)" {
+  package "Präsentation" as Praes {
+    rectangle "main.ts\nviews/*\nui/layout.ts, ui/modal.ts,\nui/toast.ts, ui/theme.ts\nstyles.css" as PraesInhalt
+  }
+  package "Anwendung" as Anw {
+    rectangle "store.ts\nui/buchung.ts" as AnwInhalt
+  }
+  package "Datenzugriff" as Dat {
+    rectangle "backend.ts\nsupabase.ts\nconfig.ts" as DatInhalt
+  }
+  package "Querschnitt" as Quer {
+    rectangle "types.ts\nutil.ts" as QuerInhalt
+  }
+}
+
+package "Server (supabase/)" as Srv {
+  rectangle "schema.sql" as SrvInhalt
+}
+
+Praes .down.> Anw : <<import>>
+Anw .down.> Dat : <<import>>
+Praes .down.> Dat : <<import>>\n(gelockert)
+Praes .right.> Quer : <<import>>
+Anw .right.> Quer : <<import>>
+Dat .right.> Quer : <<import>>
+Anw .up.> Praes : <<import>>\n(ui/buchung.ts nutzt\nDialoge und Meldungen)
+Dat .down.> Srv : <<use>>\n(HTTPS)
+@enduml
