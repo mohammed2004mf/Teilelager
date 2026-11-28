@@ -23,9 +23,21 @@ export function delta(n: number): string {
 
 export function reifenGroesse(t: Pick<Teil, 'breite' | 'hoehe' | 'zoll' | 'reifen_index'>): string {
   if (!t.breite && !t.hoehe && !t.zoll) return '';
-  const zoll = t.zoll !== null && t.zoll !== undefined ? String(t.zoll).replace('.', ',').replace(/,0$/, '') : '';
-  const basis = `${t.breite ?? '?'}/${t.hoehe ?? '?'} R${zoll || '?'}`;
+  // Zoll ist Freitext (z. B. 16, 16,5, R16C, ZR17). Beginnt er mit einem Buchstaben, kein zusätzliches „R“.
+  const zoll = t.zoll !== null && t.zoll !== undefined ? String(t.zoll).trim().replace('.', ',').replace(/,0$/, '') : '';
+  const zollTeil = /^[a-z]/i.test(zoll) ? zoll.toUpperCase() : `R${zoll.toUpperCase() || '?'}`;
+  const basis = `${t.breite ?? '?'}/${t.hoehe ?? '?'} ${zollTeil}`;
   return t.reifen_index ? `${basis} ${t.reifen_index}` : basis;
+}
+
+/** Zoll-Filter: „16“ findet 16, R16, ZR16 und R16C; mit Buchstaben wird nach dem Text gesucht. */
+export function zollPasst(zoll: string | number | null | undefined, filter: string): boolean {
+  const norm = (s: string) => s.toUpperCase().replace(/\s/g, '').replace(',', '.').replace(/\.0(?!\d)/, '');
+  const wert = norm(String(zoll ?? ''));
+  const f = norm(filter);
+  if (f === '') return true;
+  if (/^\d+(\.\d+)?$/.test(f)) return wert.match(/\d+(\.\d+)?/)?.[0] === f;
+  return wert.includes(f);
 }
 
 /** Kurze Zusatz-Zeile unter dem Namen, je nach Vorlage der Kategorie */

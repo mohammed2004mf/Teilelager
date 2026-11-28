@@ -46,7 +46,7 @@ function spezialHtml(vorlage: Vorlage, t: Partial<Teil>): string {
         <div class="feld-raster feld-raster-3">
           ${feld('breite', 'Breite', t.breite, { typ: 'number', zusatz: '(mm)', platzhalter: 'z. B. 205', gross: true })}
           ${feld('hoehe', 'Höhe', t.hoehe, { typ: 'number', zusatz: '(Querschnitt in %)', platzhalter: 'z. B. 55', gross: true })}
-          ${feld('zoll', 'Zoll', t.zoll, { typ: 'number', zusatz: '(Felgendurchmesser)', platzhalter: 'z. B. 16', gross: true })}
+          ${feld('zoll', 'Zoll', t.zoll, { zusatz: '(Felgendurchmesser)', platzhalter: 'z. B. 16 oder R16C', gross: true })}
         </div>
         <p class="grau">Ergibt die Reifengröße: <strong class="dunkel" id="reifen-vorschau">${esc(reifenGroesse({
           breite: t.breite ?? null,
@@ -187,7 +187,7 @@ export function teilFormView(teilId: number | null): View {
       hersteller: v === 'filter' ? leerZuNull(d.get('hersteller')) : null,
       breite: v === 'reifen' ? ganz(zahlOderNull(d.get('breite'))) : null,
       hoehe: v === 'reifen' ? ganz(zahlOderNull(d.get('hoehe'))) : null,
-      zoll: v === 'reifen' ? zahlOderNull(d.get('zoll')) : null,
+      zoll: v === 'reifen' ? leerZuNull(d.get('zoll')) : null,
       reifen_index: v === 'reifen' ? leerZuNull(d.get('reifen_index'))?.toUpperCase() ?? null : null,
       saison: v === 'reifen' ? ((leerZuNull(d.get('saison')) as TeilEingabe['saison']) ?? null) : null,
       marke: leerZuNull(d.get('marke')),
@@ -216,7 +216,7 @@ export function teilFormView(teilId: number | null): View {
           const v = reifenGroesse({
             breite: zahlOderNull(wert('f-breite')),
             hoehe: zahlOderNull(wert('f-hoehe')),
-            zoll: zahlOderNull(wert('f-zoll')),
+            zoll: wert('f-zoll').trim() || null,
             reifen_index: wert('f-reifen_index').trim().toUpperCase() || null,
           });
           const ziel = root.querySelector<HTMLElement>('#reifen-vorschau');
