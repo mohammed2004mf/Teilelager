@@ -9,13 +9,14 @@ function feld(
   name: string,
   label: string,
   wert: string | number | null | undefined,
-  o: { typ?: string; platzhalter?: string; breit?: boolean; zusatz?: string; pflicht?: boolean; gross?: boolean } = {},
+  o: { typ?: string; platzhalter?: string; breit?: boolean; zusatz?: string; pflicht?: boolean; gross?: boolean; hilfe?: string } = {},
 ): string {
   return `<div class="feld${o.breit ? ' feld-breit' : ''}">
     <label for="f-${name}">${esc(label)}${o.zusatz ? ` <span class="label-zusatz">${esc(o.zusatz)}</span>` : ''}</label>
     <input id="f-${name}" name="${name}" type="${o.typ ?? 'text'}" class="input${o.gross ? ' input-zahl-gross' : ''}"
       value="${esc(wert ?? '')}"${o.platzhalter ? ` placeholder="${esc(o.platzhalter)}"` : ''}${o.pflicht ? ' required' : ''}
       ${o.typ === 'number' ? 'step="any" inputmode="decimal"' : ''}>
+    ${o.hilfe ? `<span class="feld-hilfe">${esc(o.hilfe)}</span>` : ''}
   </div>`;
 }
 
@@ -105,7 +106,11 @@ export function teilFormView(teilId: number | null): View {
             <h2 class="h-klein">Grunddaten</h2>
             <div class="feld-raster">
               ${feld('marke', 'Marke', t.marke, { platzhalter: 'z. B. LIQUI MOLY, MANN, Continental' })}
-              ${feld('bezeichnung', 'Bezeichnung', t.bezeichnung, { pflicht: true, platzhalter: 'z. B. Benzin System Reiniger' })}
+              ${feld('bezeichnung', 'Bezeichnung', t.bezeichnung, {
+                zusatz: '– optional',
+                platzhalter: 'z. B. Benzin System Reiniger',
+                hilfe: 'Leer lassen: Der Name wird aus Kategorie und Angaben gebildet.',
+              })}
               <div class="feld">
                 <label for="f-kategorie">Kategorie</label>
                 <select id="f-kategorie" name="kategorie_id" class="input">
@@ -165,16 +170,14 @@ export function teilFormView(teilId: number | null): View {
     );
   }
 
-  function eingabeAusForm(form: HTMLFormElement): TeilEingabe | string {
+  function eingabeAusForm(form: HTMLFormElement): TeilEingabe {
     const d = new FormData(form);
-    const bezeichnung = leerZuNull(d.get('bezeichnung'));
-    if (!bezeichnung) return 'Bitte eine Bezeichnung eingeben.';
     const kategorie_id = Number(d.get('kategorie_id'));
     const v = vorlageVon(kategorie_id);
     const ganz = (n: number | null) => (n === null ? null : Math.round(n));
-    return {
+    const eingabe: TeilEingabe = {
       kategorie_id,
-      bezeichnung,
+      bezeichnung: leerZuNull(d.get('bezeichnung')) ?? '',
       artikelnummer: leerZuNull(d.get('artikelnummer')),
       ean: leerZuNull(d.get('ean')),
       lieferant: leerZuNull(d.get('lieferant')),
@@ -193,6 +196,20 @@ export function teilFormView(teilId: number | null): View {
       marke: leerZuNull(d.get('marke')),
       dot: v === 'reifen' ? leerZuNull(d.get('dot')) : null,
     };
+    // Bezeichnung ist optional; die Datenbank braucht aber einen Namen (Anzeige, Buchungen).
+    if (!eingabe.bezeichnung) eingabe.bezeichnung = automatischeBezeichnung(eingabe, v);
+    return eingabe;
+  }
+
+  /** Name aus Kategorie und den wichtigsten Angaben, z. B. „Reifen 165/65 R15 81T“ */
+  function automatischeBezeichnung(e: TeilEingabe, v: Vorlage): string {
+    const kat = store.kategorie(e.kategorie_id)?.name ?? 'Teil';
+    let angabe = '';
+    if (v === 'reifen') angabe = reifenGroesse(e);
+    else if (v === 'oel') angabe = [e.viskositaet, e.gebinde].filter(Boolean).join(' ');
+    else if (v === 'filter') angabe = e.hersteller ?? '';
+    if (!angabe) angabe = e.artikelnummer ? `Art.-Nr. ${e.artikelnummer}` : '';
+    return angabe ? `${kat} ${angabe}` : kat;
   }
 
   return {
@@ -231,12 +248,6 @@ export function teilFormView(teilId: number | null): View {
         const weiter = submitter?.dataset.weiter === '1';
         const fehler = root.querySelector<HTMLElement>('.form-fehler')!;
         const daten = eingabeAusForm(form);
-        if (typeof daten === 'string') {
-          fehler.textContent = daten;
-          fehler.hidden = false;
-          root.querySelector<HTMLInputElement>('#f-bezeichnung')?.focus();
-          return;
-        }
         fehler.hidden = true;
         if (istNeu) {
           const vorhanden = findeDoppeltes(daten);

@@ -165,14 +165,14 @@ Die Angabe zur Häufigkeit ist eine Annahme und noch mit dem Auftraggeber zu bes
 **Hauptszenario**
 1. Der Inhaber öffnet „Lager“ und dort „Neues Teil“.
 2. Er wählt eine Kategorie. Die weiteren Felder passen sich der Vorlage der Kategorie an (Standard, Öl, Filter oder Reifen).
-3. Er trägt die Bezeichnung und die gewünschten weiteren Angaben ein (zum Beispiel Artikelnummer, Lieferant, Lagerort, passende Fahrzeuge, Einheit).
+3. Er trägt die gewünschten Angaben ein (zum Beispiel Bezeichnung, Artikelnummer, Lieferant, Lagerort, passende Fahrzeuge, Einheit).
 4. Er speichert das Teil.
-5. Das System prüft die Pflichtangaben und speichert das Teil.
+5. Das System speichert das Teil.
 6. Das Teil erscheint in der Lagerliste.
 
 **Alternativen**
 - 1a Es ist noch keine Kategorie vorhanden: Das System weist darauf hin, zuerst eine Kategorie anzulegen, und verweist auf die Kategorien.
-- 5a Eine Pflichtangabe fehlt: Das System meldet den Fehler und der Ablauf geht zurück zu Schritt 3.
+- 5a Die Bezeichnung ist leer: Das System bildet den Namen aus der Kategorie und den wichtigsten Angaben (zum Beispiel Reifengröße, Viskosität und Gebinde oder Artikelnummer) und speichert das Teil.
 - 5b Ein gleiches Teil existiert schon: Das System warnt.
 - *Variante:* Mit „Speichern und nächstes Teil“ legt der Inhaber mehrere Teile hintereinander an.
 

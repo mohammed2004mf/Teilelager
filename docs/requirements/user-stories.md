@@ -22,7 +22,7 @@ Die Stories folgen der Vorlage *Als ROLLE möchte ich FUNKTION, um NUTZEN zu err
 Als Inhaber möchte ich ein neues Teil mit seinen Angaben anlegen, um es im Lager zu führen und wiederzufinden.
 
 Akzeptanzkriterien:
-- Ein Teil braucht eine Kategorie und eine Bezeichnung; ohne beides kann es nicht gespeichert werden.
+- Ein Teil braucht eine Kategorie. Die Bezeichnung ist optional; bleibt sie leer, bildet das System den Namen aus der Kategorie und den wichtigsten Angaben (zum Beispiel „Reifen 165/65 R15 81T“).
 - Optional lassen sich Artikelnummer, Lieferant, Lagerort, passende Fahrzeuge und die Einheit (Stück oder Packung) erfassen.
 - Je nach Kategorie-Vorlage erscheinen zusätzliche Felder: Öl/Flüssigkeit (Viskosität, Freigabe, Gebinde), Filter (Hersteller), Reifen (Breite, Höhe, Zoll, Index, Saison, Marke, DOT).
 - Existiert ein gleiches Teil schon im Lager, erscheint eine Warnung.
