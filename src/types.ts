@@ -26,7 +26,7 @@ export interface Teil {
   hersteller: string | null;
   breite: number | null;
   hoehe: number | null;
-  zoll: number | null;
+  zoll: string | null;
   reifen_index: string | null;
   saison: Saison | null;
   marke: string | null;

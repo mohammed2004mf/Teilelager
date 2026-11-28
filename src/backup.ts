@@ -53,7 +53,7 @@ export async function sicherungHerunterladen(): Promise<void> {
       ...t,
       kategorie: store.kategorie(t.kategorie_id)?.name ?? '',
       groesse: reifenGroesse(t),
-      zoll: t.zoll !== null ? Number(t.zoll) : null,
+      zoll: t.zoll,
     }),
   );
   kopfStil(wsTeile);

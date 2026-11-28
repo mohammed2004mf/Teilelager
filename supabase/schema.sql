@@ -39,7 +39,7 @@ create table if not exists public.teile (
   -- Vorlage "reifen"
   breite         integer,
   hoehe          integer,
-  zoll           numeric(4,1),
+  zoll           text,          -- Freitext, z. B. 16, R16C, ZR17
   reifen_index   text,
   saison         text check (saison is null or saison in ('Sommer', 'Winter', 'Ganzjahr')),
   marke          text,
@@ -49,6 +49,19 @@ create table if not exists public.teile (
 );
 
 create index if not exists teile_kategorie_idx on public.teile(kategorie_id);
+
+-- Bestehende Datenbanken: "zoll" von Zahl auf Text umstellen (Buchstaben wie R16C oder ZR17 erlaubt).
+-- Vorhandene Werte bleiben erhalten, aus 16.0 wird "16".
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'teile' and column_name = 'zoll' and data_type <> 'text'
+  ) then
+    alter table public.teile alter column zoll type text
+      using regexp_replace(zoll::text, '\.0$', '');
+  end if;
+end $$;
 
 -- Buchungen: gespeichert werden nur Verkäufe (und deren Rückgängig). Zugänge/Korrekturen nicht.
 -- "menge" ist die Änderung des Bestands: Zugang +, Verkauf −, Korrektur ±, Storno = Gegenbuchung.

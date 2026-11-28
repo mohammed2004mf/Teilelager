@@ -1,14 +1,14 @@
 import { store } from '../store';
 import type { Teil, View } from '../types';
 import { teilZeileHtml, teilZeilenKopfHtml, verbindeBuchen } from '../ui/buchung';
-import { esc, ICON, passtZuSuche, zahlOderNull } from '../util';
+import { esc, ICON, passtZuSuche, zahlOderNull, zollPasst } from '../util';
 
 export function lagerlisteView(): View {
   let root: HTMLElement;
   let suche = '';
   let nurLeer = /[?&]leer/.test(location.hash);
   let katFilter: number | null = null;
-  const reifen = { breite: null as number | null, hoehe: null as number | null, zoll: null as number | null };
+  const reifen = { breite: null as number | null, hoehe: null as number | null, zoll: null as string | null };
 
   const reifenAktiv = () => reifen.breite !== null || reifen.hoehe !== null || reifen.zoll !== null;
 
@@ -21,7 +21,7 @@ export function lagerlisteView(): View {
         if (kat?.vorlage !== 'reifen') return false;
         if (reifen.breite !== null && t.breite !== reifen.breite) return false;
         if (reifen.hoehe !== null && t.hoehe !== reifen.hoehe) return false;
-        if (reifen.zoll !== null && Number(t.zoll) !== reifen.zoll) return false;
+        if (reifen.zoll !== null && !zollPasst(t.zoll, reifen.zoll)) return false;
       }
       return passtZuSuche(t, kat, suche);
     });
@@ -115,7 +115,7 @@ export function lagerlisteView(): View {
             <input id="f-hoehe" type="number" class="input input-mini" placeholder="Höhe" inputmode="numeric">
             <span class="grau" aria-hidden="true">R</span>
             <label class="nur-sr" for="f-zoll">Zoll</label>
-            <input id="f-zoll" type="number" class="input input-mini" placeholder="Zoll" inputmode="decimal">
+            <input id="f-zoll" type="text" class="input input-mini" placeholder="Zoll" autocomplete="off">
           </div>
           <nav class="tabs" id="kat-tabs" aria-label="Kategorien"></nav>
         </section>
@@ -137,12 +137,17 @@ export function lagerlisteView(): View {
         }),
       );
 
-      (['breite', 'hoehe', 'zoll'] as const).forEach((feld) => {
+      (['breite', 'hoehe'] as const).forEach((feld) => {
         const el = root.querySelector<HTMLInputElement>(`#f-${feld}`)!;
         el.addEventListener('input', () => {
           reifen[feld] = zahlOderNull(el.value);
           renderListe();
         });
+      });
+      const zollEl = root.querySelector<HTMLInputElement>('#f-zoll')!;
+      zollEl.addEventListener('input', () => {
+        reifen.zoll = zollEl.value.trim() || null;
+        renderListe();
       });
 
       root.addEventListener('click', (e) => {
